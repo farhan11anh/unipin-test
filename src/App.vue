@@ -1,9 +1,11 @@
 <template>
-  <v-app>
-    <v-main>
-      <router-view />
-    </v-main>
-  </v-app>
+  <div class="pa-5">
+    <v-app>
+      <v-main>
+        <router-view />
+      </v-main>
+    </v-app>
+  </div>
 </template>
 
 <script setup>
