@@ -58,6 +58,12 @@ const game = useRoute().params.game;
    <div class="mt-5" >
       <ListGame />
    </div>
+
+   <div style="width: 100%;" >
+      <div class="btn-done">
+        <button>SUBMIT</button>
+      </div>
+    </div>
 </template>
 
 <style scoped>
@@ -166,5 +172,24 @@ hr {
   font-size: 20px;
   color: #292424;
   font-weight: bold;
+}
+
+.btn-done {
+  height: 50px;
+  background-color: #00549b;
+  border-radius: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 15px;
+}
+
+.btn-done button {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
 }
 </style>
