@@ -12,7 +12,7 @@
   </VRow>
 
   <!-- carousel  -->
-  <div class="carousel mt-5">
+  <div class="mt-5">
     <!-- <v-carousel
       height="200"
       show-arrows="hover"
@@ -29,42 +29,51 @@
     </v-carousel> -->
 
     <div>
-    <GlobalCarousel />
-</div>
+      <GlobalCarousel />
+    </div>
   </div>
 
   <!-- search input -->
-  <div class="mt-15">
-    <h4 class="title mb-5" >Search for a game</h4>
+  <div class="mt-5">
+    <h4 class="title mb-5">Search for a game</h4>
     <div class="search-input-container">
       <Icon class="search-icon" icon="mdi-magnify" />
-      <input type="text" class="search-input" placeholder="Search..." v-model="search" />
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search..."
+        v-model="search"
+      />
     </div>
   </div>
 
   <!-- game list -->
-   <div class="mt-15" >
-     <h4 class="title mb-5" >Most Popular</h4>
-     <div>
+  <div class="mt-15">
+    <h4 class="title mb-5">Most Popular</h4>
+    <div>
       <VRow>
         <VCol
           cols="6"
-          v-for="game in game_list"
+          v-for="game in gameListFiltered"
+          @click="router.push({ path: `/details/${game.name}` })"
         >
           <VCard>
             <VImg :src="game.image" height="120px" cover />
           </VCard>
-          <p class="title-text" >{{ game.name }}</p>
-          <p class="text-caption" >{{ game.description }}</p>
+          <p class="title-text">{{ game.name }}</p>
+          <p class="text-caption">{{ game.description }}</p>
         </VCol>
       </VRow>
-     </div>
-   </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import GlobalCarousel from "@/components/Global/GlobalCarousel.vue";
 import { Icon } from "@iconify/vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const colors = ref([
   "indigo",
@@ -74,9 +83,16 @@ const colors = ref([
   "deep-purple accent-4",
 ]);
 const slides = ref(["First", "Second", "Third", "Fourth", "Fifth"]);
+const search = ref("");
 
+const gameListFiltered = computed(() => {
+  const res = game_list.value.filter((game) => {
+    return game.name.toLowerCase().includes(search.value.toLowerCase());
+  });
+  return res;
+});
 
-
+// example data
 const game_list = ref([
   {
     name: "Mobile Legend",
@@ -97,9 +113,13 @@ const game_list = ref([
     name: "Free Fire",
     description: "Top up diamond",
     image: "/src/assets/img/ff.jpg",
-  }
-])
-
+  },
+  {
+    name: "Free Fire Max",
+    description: "Top up diamond",
+    image: "/src/assets/img/ff.jpg",
+  },
+]);
 </script>
 
 <style scoped>
@@ -126,30 +146,6 @@ const game_list = ref([
   box-shadow: 10px 10px 60px 0 rgba(226, 221, 221, 0.2);
 }
 
-::v-deep .v-carousel__controls {
-  /* top: 230px; */
-  /* position: fixed; */
-  margin-bottom: -60px;
-}
-
-::v-deep .v-carousel__controls__item {
-  height: 12px;
-  width: 12px;
-  border-radius: 50%;
-  background-color: #e1e1e2;
-  transition: background-color 0.3s ease;
-  width: 1px;
-}
-
-::v-deep .v-carousel__controls__item--active {
-  background-color: #f87304;
-  width: 100px;
-}
-
-::v-deep .v-window--show-arrows-on-hover {
-  overflow: visible !important;
-  border-radius: 15px;
-}
 
 .search-input-container {
   display: flex;
@@ -157,7 +153,11 @@ const game_list = ref([
   position: relative;
   padding: 2px; /* Slim border */
   border-radius: 15px;
-  background: linear-gradient(to right, rgba(0, 150, 255, 0.4), rgba(255, 100, 0, 0.4)); /* Soft gradient */
+  background: linear-gradient(
+    to right,
+    rgba(0, 150, 255, 0.4),
+    rgba(255, 100, 0, 0.4)
+  ); /* Soft gradient */
   transition: background 0.3s ease;
 }
 
@@ -188,7 +188,11 @@ const game_list = ref([
 
 /* Hover and Focus States */
 .search-input-container:hover {
-  background: linear-gradient(to right, rgba(0, 255, 255, 0.4), rgba(255, 165, 0, 0.4)); /* Softer hover gradient */
+  background: linear-gradient(
+    to right,
+    rgba(0, 255, 255, 0.4),
+    rgba(255, 165, 0, 0.4)
+  ); /* Softer hover gradient */
 }
 
 .search-input:focus {
@@ -197,11 +201,12 @@ const game_list = ref([
 }
 
 .search-input-container input:focus + .search-input-container {
-  background: linear-gradient(to right, rgba(173, 216, 230, 0.4), rgba(255, 128, 128, 0.4)); /* Soft focus gradient */
+  background: linear-gradient(
+    to right,
+    rgba(173, 216, 230, 0.4),
+    rgba(255, 128, 128, 0.4)
+  ); /* Soft focus gradient */
 }
-
-
-
 
 /* game list  */
 .text-caption {
@@ -213,7 +218,4 @@ const game_list = ref([
   font-weight: bold !important;
   font-size: 14px !important;
 }
-
-
-
 </style>

@@ -1,204 +1,69 @@
 <script setup>
-const slides = ref(["/src/assets/img/banner-1.jpg", "/src/assets/img/banner-1.jpg", "/src/assets/img/banner-1.jpg", "/src/assets/img/banner-1.jpg"]);
+import mlBannerImg from "../../assets/img/ml_banner_.jpg";
+import hokBannerImg from "../../assets/img/hok_banner_.jpg";
+import ffBannerImg from "../../assets/img/ff_banner_.jpg";
+import pubgBannerImg from "../../assets/img/pubg_banner_.jpg";
 
+const colors = ref([
+  "indigo",
+  "warning",
+  "pink darken-2",
+  "red lighten-1",
+  "deep-purple accent-4",
+]);
+
+const slides = ref([mlBannerImg, hokBannerImg, ffBannerImg, pubgBannerImg]);
 </script>
 
 <template>
-  <div class="carousel">
-    <ul class="slides">
-      <input type="radio" name="radio-buttons" id="img-1" checked />
-      <li class="slide-container" v-for="item in slides" :key="item">
-        <div class="slide-image">
-          <img
-            :src="item"
-            style="width: 100%; border-radius: 20px;"
-          />
-        </div>
-        <div class="carousel-controls">
-          <label for="img-3" class="prev-slide">
-            <span>&lsaquo;</span>
-          </label>
-          <label for="img-2" class="next-slide">
-            <span>&rsaquo;</span>
-          </label>
-        </div>
-      </li>
-      <!-- <input type="radio" name="radio-buttons" id="img-2" />
-      <li class="slide-container">
-        <div class="slide-image">
-          <img
-            src="/src/assets/img/banner-1.jpg"
-          />
-        </div>
-        <div class="carousel-controls">
-          <label for="img-1" class="prev-slide">
-            <span>&lsaquo;</span>
-          </label>
-          <label for="img-3" class="next-slide">
-            <span>&rsaquo;</span>
-          </label>
-        </div>
-      </li>
-      <input type="radio" name="radio-buttons" id="img-3" />
-      <li class="slide-container">
-        <div class="slide-image">
-          <img
-            src="/src/assets/img/banner-1.jpg"
-          />
-        </div>
-        <div class="carousel-controls">
-          <label for="img-2" class="prev-slide">
-            <span>&lsaquo;</span>
-          </label>
-          <label for="img-1" class="next-slide">
-            <span>&rsaquo;</span>
-          </label>
-        </div>
-      </li> -->
-      <div class="carousel-dots">
-        <label for="img-1" class="carousel-dot" id="img-dot-1"></label>
-        <label for="img-2" class="carousel-dot" id="img-dot-2"></label>
-        <label for="img-3" class="carousel-dot" id="img-dot-3"></label>
-      </div>
-    </ul>
-  </div>
+  <v-carousel
+    height="400"
+    :show-arrows="false"
+    cycle
+    hide-delimiter-background
+  >
+    <v-carousel-item v-for="(slide, i) in slides" :key="i">
+      <v-sheet :color="colors[i]" height="100%">
+        <VImg :src="slide" width="100%" cover />
+      </v-sheet>
+    </v-carousel-item>
+  </v-carousel>
 </template>
 
 <style scoped>
-
-.carousel {
-  height: 200px;
-}
-ul.slides {
-  display: block;
-  position: relative;
-  height: 200px;
-  margin: 0;
-  padding: 0;
-  border-radius: 10px;
-  /* overflow: hidden; */
-  list-style: none;
+:deep .v-window__container {
+  height: 95% !important;
+  border-radius: 20px;
 }
 
-.slides * {
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
-}
-
-ul.slides input {
-  display: none;
-}
-
-.slide-container {
-  display: block;
-}
-
-.slide-image {
-  display: block;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  opacity: 0;
-  transition: all 0.7s ease-in-out;
-  width: 100%;
-  height: 200px;
+:deep .v-img--booting {
   overflow: hidden;
+  border-radius: 20px;
 }
 
-.slide-image img {
-  width: auto;
-  min-width: 100%;
-  height: 100%;
+:deep .v-btn--active .v-icon {
+  width: 50px;
+  background-color: #f87304 !important;
+  border-radius: 20px !important;
+  color: #f87304 !important;
 }
 
-.carousel-controls {
-  /* top: 0; */
-  position: absolute;
-  /* left: 0;
-  right: 0; */
-  z-index: 999;
-  font-size: 100px;
-  line-height: 600px;
-  color: #fff;
+:deep .v-carousel__controls__item .v-icon {
+  background-color: #e1e1e2;
+  color: #e1e1e2;
+  border-radius: 100%;
 }
 
-.carousel-controls label {
+:deep .v-btn__overlay,
+:deep .v-btn__underlay {
   display: none;
-  position: absolute;
-  padding: 0 20px;
-  opacity: 0;
-  transition: opacity 0.2s;
-  cursor: pointer;
 }
 
-.slide-image:hover + .carousel-controls label {
-  opacity: 0.5;
+.v-carousel {
+  height: 200px !important;
 }
 
-.carousel-controls label:hover {
-  opacity: 1;
-}
-
-.carousel-controls .prev-slide {
-  width: 49%;
-  text-align: left;
-  left: 0;
-}
-
-.carousel-controls .next-slide {
-  width: 49%;
-  text-align: right;
-  right: 0;
-}
-
-.carousel-dots {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 20px;
-  z-index: 999;
-  text-align: center;
-}
-
-.carousel-dots .carousel-dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: #fff;
-  opacity: 0.5;
-  margin: 10px;
-  margin-bottom: -50px;
-}
-
-input:checked + .slide-container .slide-image {
-  opacity: 1;
-  transform: scale(1);
-  transition: opacity 1s ease-in-out;
-}
-
-input:checked + .slide-container .carousel-controls label {
-  display: block;
-}
-
-input#img-1:checked ~ .carousel-dots label#img-dot-1,
-input#img-2:checked ~ .carousel-dots label#img-dot-2,
-input#img-3:checked ~ .carousel-dots label#img-dot-3,
-input#img-4:checked ~ .carousel-dots label#img-dot-4,
-input#img-5:checked ~ .carousel-dots label#img-dot-5,
-input#img-6:checked ~ .carousel-dots label#img-dot-6 {
-  opacity: 1;
-  background-color: orange;
-  width: 30px;
-  border-radius: 10px;
-}
-
-input:checked + .slide-container .nav label {
-  display: block;
+:deep .v-carousel__controls {
+  bottom: -15px;
 }
 </style>

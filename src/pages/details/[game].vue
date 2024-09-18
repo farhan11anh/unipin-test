@@ -4,6 +4,7 @@ import { Icon } from "@iconify/vue";
 import AccountId from "@/components/details/input/AccountId.vue";
 import ZoneId from "@/components/details/input/ZoneId.vue";
 
+const router = useRouter();
 const game = useRoute().params.game;
 
 const isScardSelected = ref(false);
@@ -12,8 +13,7 @@ const zoneId = ref("");
 
 
 const isActiveButton = computed(()=> {
-  console.log(isScardSelected.value);
-
+  // console.log(isScardSelected.value);
   return isScardSelected.value && accoundId.value !== "" && zoneId.value !== "";
 })
 
@@ -22,7 +22,7 @@ const isActiveButton = computed(()=> {
 <template>
   <VRow>
     <VCol cols="2">
-      <button class="back">
+      <button class="back" @click="router.go(-1)">
         <Icon class="icon" icon="ion:chevron-back" width="15" />
       </button>
     </VCol>
@@ -66,7 +66,7 @@ const isActiveButton = computed(()=> {
 
    <div style="width: 100%;" >
       <div class="btn-done" :class="isActiveButton ? 'active' : 'disabled'">
-        <button class="btn" :disabled="!isActiveButton">CONTINUE</button>
+        <button class="btn" :class="{disabled : !isActiveButton}" :disabled="!isActiveButton">CONTINUE</button>
       </div>
     </div>
 

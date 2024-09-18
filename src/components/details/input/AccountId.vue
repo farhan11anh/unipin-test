@@ -6,7 +6,6 @@ const emit = defineEmits(["valueAccountId"]);
 const isError = ref(false);
 
 const onFoucus = () => {
-  console.log("focus");
   isError.value = false
 };
 
