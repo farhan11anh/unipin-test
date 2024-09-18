@@ -13,21 +13,6 @@
 
   <!-- carousel  -->
   <div class="mt-5">
-    <!-- <v-carousel
-      height="200"
-      show-arrows="hover"
-      cycle
-      hide-delimiter-background
-    >
-      <v-carousel-item v-for="(slide, i) in slides" :key="i">
-        <v-sheet :color="colors[i]" height="100%">
-          <div class="d-flex fill-height justify-center align-center">
-            <div class="text-h2">{{ slide }} Slide</div>
-          </div>
-        </v-sheet>
-      </v-carousel-item>
-    </v-carousel> -->
-
     <div>
       <GlobalCarousel />
     </div>
@@ -75,14 +60,6 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-const colors = ref([
-  "indigo",
-  "warning",
-  "pink darken-2",
-  "red lighten-1",
-  "deep-purple accent-4",
-]);
-const slides = ref(["First", "Second", "Third", "Fourth", "Fifth"]);
 const search = ref("");
 
 const gameListFiltered = computed(() => {
@@ -119,6 +96,16 @@ const game_list = ref([
     description: "Top up diamond",
     image: "/src/assets/img/ff.jpg",
   },
+  {
+    name: "EFootball",
+    description: "Top up diamond",
+    image: "/src/assets/img/efootball.jpg",
+  },
+  {
+    name: "Fifa Mobile",
+    description: "Top up diamond",
+    image: "/src/assets/img/fifam.jpg",
+  },
 ]);
 </script>
 
@@ -145,7 +132,6 @@ const game_list = ref([
   border-radius: 15px;
   box-shadow: 10px 10px 60px 0 rgba(226, 221, 221, 0.2);
 }
-
 
 .search-input-container {
   display: flex;
