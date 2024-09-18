@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue';
 
+const emit = defineEmits(['selectCard']);
+
 // Card data
 const cards = [
   { value: 'Start', label: "MLBB Twilight Pass", image: "/src/assets/img/twilightML.png" },
@@ -25,6 +27,7 @@ const selectedCard = ref(null);
 const selectCard = (value) => {
   selectedCard.value = value;
   console.log(selectedCard.value);
+  emit('selectCard', selectedCard.value);
 
 };
 </script>

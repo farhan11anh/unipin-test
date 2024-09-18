@@ -1,7 +1,22 @@
 <script setup>
 import ListGame from "@/components/details/ListGame.vue";
 import { Icon } from "@iconify/vue";
+import AccountId from "@/components/details/input/AccountId.vue";
+import ZoneId from "@/components/details/input/ZoneId.vue";
+
 const game = useRoute().params.game;
+
+const isScardSelected = ref(false);
+const accoundId = ref("");
+const zoneId = ref("");
+
+
+const isActiveButton = computed(()=> {
+  console.log(isScardSelected.value);
+
+  return isScardSelected.value && accoundId.value !== "" && zoneId.value !== "";
+})
+
 </script>
 
 <template>
@@ -32,41 +47,33 @@ const game = useRoute().params.game;
       <VCol
         cols="8"
       >
-        <div class="input-custom">
-          <Icon
-            class="icon"
-            icon="flowbite:users-group-solid"
-            width="25"
-            color="orange"
-          />
-          <input type="text" placeholder="Account ID" />
-        </div>
+        <AccountId @valueAccountId="accoundId = $event" />
       </VCol>
       <VCol
         cols="4"
       >
-        <div class="input-server">
-          <span class="parenthesis">(</span>
-          <input type="text" placeholder="Zone ID" />
-          <span class="parenthesis">)</span>
-        </div>
+        <ZoneId @valueZoneId="zoneId = $event" />
       </VCol>
     </VRow>
   </div>
 
   <!-- list item  -->
    <div class="mt-5" >
-      <ListGame />
+      <ListGame
+        @selectCard="isScardSelected = true"
+      />
    </div>
 
    <div style="width: 100%;" >
-      <div class="btn-done">
-        <button>SUBMIT</button>
+      <div class="btn-done" :class="isActiveButton ? 'active' : 'disabled'">
+        <button class="btn" :disabled="!isActiveButton">CONTINUE</button>
       </div>
     </div>
+
 </template>
 
 <style scoped>
+
 .back {
   border: 1px solid #e4e4e4;
   border-radius: 12px;
@@ -169,7 +176,7 @@ hr {
 }
 
 .parenthesis {
-  font-size: 20px;
+  font-size: 16px;
   color: #292424;
   font-weight: bold;
 }
@@ -191,5 +198,11 @@ hr {
   color: white;
   font-size: 14px;
   font-weight: 500;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #656565;
 }
 </style>
