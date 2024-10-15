@@ -63,12 +63,14 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    proxy: {
-      '/in-game-topup': {
-        target: 'https://dev-api.unipin.com',
-        changeOrigin: true,
-        secure: true,
-      },
-    },
+
+    // using for set proxy
+    // proxy: {
+    //   '/in-game-topup': {
+    //     target: 'https://dev-api.unipin.com',
+    //     changeOrigin: true,
+    //     secure: true,
+    //   },
+    // },
   },
 })

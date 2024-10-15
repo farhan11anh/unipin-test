@@ -1,9 +1,13 @@
 import axios from "axios";
-import CryptoJS from 'crypto-js';
-// import { useLayoutStore } from "@/stores/layout";
+// import CryptoJS from 'crypto-js';
+import { useLayoutStore } from "@/stores/layout";
+import {useAuthStore} from "@/stores/auth";
+
+const layoutStore = useLayoutStore();
+const authStore = useAuthStore();
 
 export const $api = axios.create({
-    baseURL: ""
+    baseURL: import.meta.env.VITE_API_BASE_URL || '/api/v1.0',
 })
 
 $api.CancelToken = axios.CancelToken;
@@ -14,18 +18,18 @@ $api.isCancel = axios.isCancel;
 */
 $api.interceptors.request.use(
   (config) => {
-    // console.log(import.meta.env.VITE_API_BASE_URL);
+    console.log(import.meta.env.VITE_API_BASE_URL);
 
-    const partnerid = '9b42a14d-a986-40a9-b4cc-354be6aea6db'; // Replace with actual partner ID
-    const timestamp = Math.floor(Date.now() / 1000);
-    const path = 'in-game-topup/list'; // Replace with the actual API path
-    const secretKey = 'w56kbwxuxh3heka3'; // Replace with your secret key
+    // const partnerid = import.meta.env.VITE_PARTNER_ID; // Replace with actual partner ID
+    // const timestamp = Math.floor(Date.now() / 1000);
+    // const path = config.url.slice(1); // Replace with the actual API path
+    // const secretKey = import.meta.env.VITE_SECRET; // Replace with your secret key
 
-    // Concatenate the partnerid, timestamp, and path
-    const dataToHash = partnerid + timestamp + path;
+    // // Concatenate the partnerid, timestamp, and path
+    // const dataToHash = partnerid + timestamp + path;
 
-    // Generate HMAC-SHA256 hash
-    const hash = CryptoJS.HmacSHA256(dataToHash, secretKey).toString(CryptoJS.enc.Hex);
+    // // Generate HMAC-SHA256 hash
+    // const hash = CryptoJS.HmacSHA256(dataToHash, secretKey).toString(CryptoJS.enc.Hex);
     // useLayoutStore().setLoading(true);
 
     // if (config?.params?.is_noloading || config?.data?.is_noloading) {
@@ -42,12 +46,16 @@ $api.interceptors.request.use(
     // let token = useAuth().token;
     // let token = useCookie("accessToken").value;
 
-    if (hash) {
-      // config.headers["Authorization"] = `Bearer ${hash}`;
-      config.headers["partnerid"] = partnerid;
-      config.headers["timestamp"] = timestamp;
-      config.headers["path"] = path;
-      config.headers["auth"] = hash;
+    // if (hash) {
+    //   // config.headers["Authorization"] = `Bearer ${hash}`;
+    //   config.headers["partnerid"] = partnerid;
+    //   config.headers["timestamp"] = timestamp;
+    //   config.headers["path"] = path;
+    //   config.headers["auth"] = hash;
+    // }
+
+    if(localStorage.getItem('access_token')) {
+      config.headers.Authorization = `Bearer ${localStorage.getItem('access_token')}`;
     }
 
     // if (['post', 'put', 'patch', 'delete'].includes(config.method)) {
@@ -77,6 +85,7 @@ $api.interceptors.request.use(
     //     delete config?.data?.['is_noloading'];
     //   }
     // }
+    layoutStore.setLoading(true);
 
     return config;
   },
@@ -88,6 +97,7 @@ $api.interceptors.request.use(
 
 $api.interceptors.response.use(
   (response) => {
+    layoutStore.setLoading(false);
     // useLayoutStore().setLoading(false);
     // if (response.status >= 200 && response.status < 300) {
     //   response.data = JSON.parse(decrypt(response.data.data));
@@ -100,7 +110,17 @@ $api.interceptors.response.use(
     return response;
   },
   function (err) {
+    console.log(err.response.status, 'err broh');
+    if (err?.response?.status === 401) {
+      localStorage.removeItem('access_token');
+
+      // redirect to brimo (simulation)
+      navigateTo('/my-lab');
+    }
+
     return new Promise(function () {
+      layoutStore.setError(true);
+      layoutStore.setLoading(false);
     //   /resolve, reject/
     //   // clearTimeout(delay_on_isloading);
     //   // delay_on_isloading = setTimeout(() => {

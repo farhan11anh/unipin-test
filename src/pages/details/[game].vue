@@ -3,19 +3,55 @@ import ListGame from "@/components/details/ListGame.vue";
 import { Icon } from "@iconify/vue";
 import AccountId from "@/components/details/input/AccountId.vue";
 import ZoneId from "@/components/details/input/ZoneId.vue";
+import { useDetailsGameStore } from "@/stores/details-game";
+import { $api } from "@/utils/api";
 
 const router = useRouter();
-const game = useRoute().params.game;
+const game_code = useRoute().params.game;
+
+const detailsGameStore = useDetailsGameStore();
 
 const isScardSelected = ref(false);
-const accoundId = ref("");
-const zoneId = ref("");
+const userid = ref("");
+const zoneid = ref("");
+
+
+detailsGameStore.getData(game_code);
+const gameDetails = computed(() => {
+  console.log(detailsGameStore.details);
+
+  return detailsGameStore.details;
+})
+
 
 
 const isActiveButton = computed(()=> {
-  // console.log(isScardSelected.value);
-  return isScardSelected.value && accoundId.value !== "" && zoneId.value !== "";
+  return isScardSelected.value && userid.value !== "" && zoneid.value !== "";
 })
+
+const onSelectCard = (event) => {
+  isScardSelected.value = true;
+  console.log(event);
+
+}
+
+const onsubmit = async() => {
+  console.log('sambitt ');
+  try {
+    await $api.post('/in-game-topup/user/validate', {
+      game_code,
+      fields: {
+        userid: userid.value,
+        zoneid: zoneid.value
+      }
+    }).then((response) => {
+      console.log(response);
+    })
+  } catch (error) {
+
+  }
+
+}
 
 </script>
 
@@ -27,7 +63,7 @@ const isActiveButton = computed(()=> {
       </button>
     </VCol>
     <VCol cols="8">
-      <p style="text-align: center">{{ game }}</p>
+      <p style="text-align: center">{{ gameDetails?.game?.name }}</p>
     </VCol>
     <VCol cols="2"></VCol>
   </VRow>
@@ -36,8 +72,8 @@ const isActiveButton = computed(()=> {
     <div style="height: 200px; margin-bottom: 15px">
       <VImg src="/src/assets/img/ml.jpg" width="100%" cover rounded />
     </div>
-    <div class="title-game">Mobile Legends Bang Bang</div>
-    <div class="description">Diamond Top up</div>
+    <div class="title-game">{{ gameDetails?.game?.name }}</div>
+    <div class="description">Top up {{ gameDetails?.game?.name }}</div>
   </div>
 
   <div class="card-input mt-5">
@@ -47,12 +83,12 @@ const isActiveButton = computed(()=> {
       <VCol
         cols="8"
       >
-        <AccountId @valueAccountId="accoundId = $event" />
+        <AccountId @valueAccountId="userid = $event" />
       </VCol>
       <VCol
         cols="4"
       >
-        <ZoneId @valueZoneId="zoneId = $event" />
+        <ZoneId @valueZoneId="zoneid = $event" />
       </VCol>
     </VRow>
   </div>
@@ -60,13 +96,14 @@ const isActiveButton = computed(()=> {
   <!-- list item  -->
    <div class="mt-5" >
       <ListGame
-        @selectCard="isScardSelected = true"
+        @selectCard="onSelectCard($event)"
+        :items="gameDetails?.denominations"
       />
    </div>
 
    <div style="width: 100%;" >
       <div class="btn-done" :class="isActiveButton ? 'active' : 'disabled'">
-        <button class="btn" :class="{disabled : !isActiveButton}" :disabled="!isActiveButton">CONTINUE</button>
+        <button @click="onsubmit()" class="btn" :class="{disabled : !isActiveButton}" :disabled="!isActiveButton">CONTINUE</button>
       </div>
     </div>
 

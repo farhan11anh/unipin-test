@@ -1,48 +1,49 @@
 // src/plugins/axios.js
-import axios from 'axios'
-
-const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api', // Your API base URL
-  timeout: 10000, // Timeout limit (in milliseconds)
-  headers: {
-    'Content-Type': 'application/json'
-  }
-})
-
-// Setup request interceptors (optional)
-axiosInstance.interceptors.request.use(
-  (config) => {
-    // Add Authorization token or other configurations here
-    const token = localStorage.getItem('token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-    return config
-  },
-  (error) => {
-    return Promise.reject(error)
-  }
-)
-
-// Setup response interceptors (optional)
-axiosInstance.interceptors.response.use(
-  (response) => {
-    // Process response data
-    return response
-  },
-  (error) => {
-    // Handle errors globally
-    if (error.response && error.response.status === 401) {
-      // Handle unauthorized access, maybe redirect to login
-    }
-    return Promise.reject(error)
-  }
-)
+import axios from 'axios';
 
 export default {
   install(app) {
-    console.log('Axios plugin registered') // Debugging log
-    app.config.globalProperties.$axios = axiosInstance
-    app.provide('axios', axiosInstance)
-  }
-}
+    const axiosInstance = axios.create({
+      baseURL: 'https://api.example.com', // Ganti dengan URL API-mu
+      timeout: 10000,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Tambahkan interceptor request
+    axiosInstance.interceptors.request.use(
+      (config) => {
+        // Contoh: menambahkan auth token ke header request
+        const token = localStorage.getItem('access_token');
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+      (error) => {
+        // Jika terjadi error saat mengirim request
+        return Promise.reject(error);
+      }
+    );
+
+    // Tambahkan interceptor response
+    axiosInstance.interceptors.response.use(
+      (response) => {
+        // Jika respon berhasil, langsung return respon
+        return response;
+      },
+      (error) => {
+        // Contoh: menangani error 401 (unauthorized)
+        if (error.response && error.response.status === 401) {
+          // Lakukan sesuatu, misalnya redirect ke halaman login
+          console.error('Unauthorized! Redirecting to login.');
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    // Tambahkan Axios ke globalProperties agar dapat diakses di seluruh aplikasi
+    app.config.globalProperties.$axios = axiosInstance;
+  },
+};

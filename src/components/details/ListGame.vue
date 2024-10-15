@@ -1,24 +1,14 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from "vue";
 
-const emit = defineEmits(['selectCard']);
+const emit = defineEmits(["selectCard"]);
 
-// Card data
-const cards = [
-  { value: 'Start', label: "MLBB Twilight Pass", image: "/src/assets/img/twilightML.png" },
-  { value: 'WL', label: "Mobile Legends Weekly Pass", image: "/src/assets/img/weekly.png" },
-  { value: 77, label: "77 Diamonds + 8 Bonus", image: "/src/assets/img/diamondML.png" },
-  { value: 40, label: "40 Diamonds + 4 Bonus", image: "/src/assets/img/diamondML.png" },
-  { value: 53, label: "53 Diamonds + 6 Bonus", image: "/src/assets/img/diamondML.png" },
-  { value: 88, label: "88 Diamonds + 8 Bonus", image: "/src/assets/img/diamondML.png" },
-  { value: 129, label: "129 Diamonds + 4 Bonus", image: "/src/assets/img/diamondML.png" },
-  { value: 259, label: "259 Diamonds + 6 Bonus", image: "/src/assets/img/diamondML.png" },
-  { value: 500, label: "500 Diamonds + 8 Bonus", image: "/src/assets/img/diamondML.png" },
-  { value: 100, label: "100 Diamonds + 4 Bonus", image: "/src/assets/img/diamondML.png" },
-  { value: 250, label: "253 Diamonds + 6 Bonus", image: "/src/assets/img/diamondML.png" },
-  { value: 1000, label: "1077 Diamonds + 8 Bonus", image: "/src/assets/img/diamondML.png" },
-  // Add more cards as needed
-];
+const props = defineProps({
+  items: {
+    type: Array,
+    default: () => [],
+  },
+});
 
 // Reactive state for selected card
 const selectedCard = ref(null);
@@ -27,50 +17,56 @@ const selectedCard = ref(null);
 const selectCard = (value) => {
   selectedCard.value = value;
   // console.log(selectedCard.value);
-  emit('selectCard', selectedCard.value);
-
+  emit("selectCard", selectedCard.value);
 };
+
+const cards = computed(() => {
+  return props.items;
+});
+
+const isLoading = ref(cards);
 </script>
 
-
 <template>
-  <div class="card-container">
+  <div v-if="cards?.length == 0">
+    <VRow>
+      <VCol
+        cols="6"
+        v-for="item in [1,2,3,4, 5,6, 7, 8]" :key="item"
+        height="50px"
+      >
+        <v-skeleton-loader type="list-item">
+        </v-skeleton-loader>
+      </VCol>
+    </VRow>
+  </div>
+
+  <div class="card-container" v-else>
     <div
-      v-for="(card, index) in cards"
+      v-for="(x, cards) in items"
       :key="index"
-      :class="['card', { 'is-selected': selectedCard === card.value }, { 'card-tall': index < 2 }]"
-      @click="selectCard(card.value)"
+      :class="['card', { 'is-selected': selectedCard === x?.id }]"
+      @click="selectCard(x?.id)"
     >
-      <VRow v-if="index < 2">
-        <VCol
-          cols="3"
+      <div>
+        <!-- <VImg :src="card.image" width="50px" height="50px" cover style="margin-left: auto; margin-right: auto;" /> -->
+        <div>{{ x?.name }}</div>
+        <div
+          style="margin-top: 10px"
+          :style="{ color: selectedCard === x?.id ? 'white' : 'orange' }"
         >
-          <VImg
-            :src="card.image"
-            width="80"
-            cover
-          />
-        </VCol>
-        <VCol
-          cols="8"
-        >
-          <p style="margin-top: 12px; margin-left: -20px; text-align: left;" >{{ card.label }}</p>
-        </VCol>
-      </VRow>
-      <div v-else >
-        <VImg :src="card.image" width="50px" height="50px" cover style="margin-left: auto; margin-right: auto;" />
-        <p>{{ card.label }}</p>
+          {{ x?.currency }}. {{ x?.amount }}
+        </div>
       </div>
     </div>
   </div>
 </template>
 
-
 <style scoped>
 .card-container {
   display: flex;
   flex-wrap: wrap;
-  gap:15px;
+  gap: 15px;
   width: 100%;
   justify-content: space-between;
 }
@@ -81,7 +77,7 @@ const selectCard = (value) => {
   padding: 16px;
   background-color: rgb(43, 67, 102);
   color: #fff;
-  text-align: center;
+  /* text-align: center; */
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -104,6 +100,4 @@ const selectCard = (value) => {
 .is-selected {
   background-color: rgb(255, 150, 46);
 }
-
-
 </style>

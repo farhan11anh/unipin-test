@@ -40,7 +40,7 @@
         <VCol
           cols="6"
           v-for="game in gameListFiltered"
-          @click="router.push({ path: `/details/${game.game_name}` })"
+          @click="router.push({ path: `/details/${game.gameCode}` })"
         >
           <v-skeleton-loader
             type="card-avatar"
@@ -50,24 +50,29 @@
           </v-skeleton-loader>
           <template v-else>
             <VCard>
-              <VImg :src="game.icon_url" height="120px" cover />
+              <VImg :src="game.iconURL" height="120px" cover />
             </VCard>
-            <p class="title-text">{{ game.category_name }}</p>
-            <p class="text-caption">{{ game.game_name }}</p>
+            <p class="title-text">{{ game.categoryName }}</p>
+            <p class="text-caption">{{ game.gameName }}</p>
           </template>
         </VCol>
       </VRow>
     </div>
   </div>
+
 </template>
 
 <script setup>
 import GlobalCarousel from "@/components/Global/GlobalCarousel.vue";
 import { $api } from "@/utils/api";
 import { Icon } from "@iconify/vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
+import { useLayoutStore } from "@/stores/layout";
 
-const isLoading = ref(false);
+const layoutStore = useLayoutStore();
+
+const isLoading = computed(() => layoutStore.isLoading)
 
 const router = useRouter();
 
@@ -75,7 +80,8 @@ const search = ref("");
 
 const gameListFiltered = computed(() => {
   const res = game_list.value.filter((game) => {
-    return game.category_name.toLowerCase().includes(search.value.toLowerCase());
+
+    return game.categoryName?.toLowerCase().includes(search.value.toLowerCase());
   });
   return res;
 });
@@ -83,33 +89,33 @@ const gameListFiltered = computed(() => {
 // example data
 const game_list = ref([
   {
-    category_name: "Mobile Legend",
+    category_name: "-",
     description: "Top up diamond",
     image: "/src/assets/img/ml.jpg",
   },
   {
-    category_name: "Mobile Legend",
+    category_name: "-",
     description: "Top up diamond",
     image: "/src/assets/img/ml.jpg",
   },
   {
-    category_name: "Mobile Legend",
+    category_name: "-",
     description: "Top up diamond",
     image: "/src/assets/img/ml.jpg",
   },
   {
-    category_name: "Mobile Legend",
+    category_name: "-",
     description: "Top up diamond",
     image: "/src/assets/img/ml.jpg",
   },
 ]);
 
 const fetchData = async () => {
-  isLoading.value = true;
   try {
-    const response = await $api.post("/in-game-topup/list").then((response) => {
-      game_list.value = response.data.game_list;
-      isLoading.value = false;
+    await $api.post("/unipin/game/list").then((response) => {
+      console.log(response);
+
+      game_list.value = response.data.responseData.gameList;
       // IF NEED FILTER BY GAME NAME //
       // const uniqueCategories = response.data.game_list.reduce((acc, current) => {
       //   // Cek apakah game_category sudah ada dalam accumulator
@@ -123,7 +129,7 @@ const fetchData = async () => {
     });
   } catch (error) {
     console.error("Error fetching data:", error);
-    isLoading.value = false;
+    console.log('Error fetching data:');
   }
 };
 
