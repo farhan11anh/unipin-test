@@ -8,9 +8,10 @@
 
     <v-snackbar
       v-model="snackbar"
-      multi-line
+
     >
-      Error from server ...
+      <!-- Error from server ... -->
+      {{ layout.error_message }}
 
       <template v-slot:actions>
         <v-btn
@@ -18,7 +19,7 @@
           variant="text"
           @click="layout.setError(false)"
         >
-          Close
+          <VIcon icon="mdi-close" />
         </v-btn>
       </template>
     </v-snackbar>
@@ -28,6 +29,7 @@
 <script setup>
   import { computed } from 'vue';
   import { useLayoutStore } from './stores/layout';
+import { VIcon } from 'vuetify/components';
 
   const layout = useLayoutStore();
 

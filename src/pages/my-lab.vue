@@ -8,12 +8,12 @@ const authStore = useAuthStore();
 
 
 const token = authStore.accessToken
-console.log(token);
+console.log(authStore.accessToken);
 
 
 // if access token not exist
 if(token === null) {
-  authStore.getAcessToken('077766179aa2cc2ccaa92f44d9cb92f2a76da84aae522339031b215785f86a20');
+  authStore.getAcessToken('cce35147a391b0fab40feb2f085fd1d5b1bd0ab95a8256eae72f579b358e601g');
 
   // if param no found or param not valid
   if(false) {
@@ -32,6 +32,6 @@ if(token === null) {
     <div>
         This is Test Page you can visit everytime ...
 
-        BRIMO Simulation ... 
+        BRIMO Simulation ...
     </div>
 </template>
