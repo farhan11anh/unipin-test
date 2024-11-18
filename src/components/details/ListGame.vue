@@ -16,7 +16,7 @@ const selectedCard = ref(null);
 // Method to handle card selection
 const selectCard = (value) => {
   selectedCard.value = value;
-  // console.log(selectedCard.value);
+  // bring items selected details
   emit("selectCard", selectedCard.value);
 };
 
@@ -46,7 +46,7 @@ const isLoading = ref(cards);
       v-for="(x, cards) in items"
       :key="index"
       :class="['card', { 'is-selected': selectedCard === x?.id }]"
-      @click="selectCard(x?.id)"
+      @click="selectCard(x)"
     >
       <div>
         <!-- <VImg :src="card.image" width="50px" height="50px" cover style="margin-left: auto; margin-right: auto;" /> -->
@@ -55,7 +55,7 @@ const isLoading = ref(cards);
           style="margin-top: 10px"
           :style="{ color: selectedCard === x?.id ? 'white' : 'orange' }"
         >
-          {{ x?.currency }}. {{ x?.amount }}
+          {{ x?.currency }}. {{ x?.totalAmount }}
         </div>
       </div>
     </div>

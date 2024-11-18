@@ -33,7 +33,7 @@ const processQueue = (error, token = null) => {
  */
 $api.interceptors.request.use(
   (config) => {
-    console.log(import.meta.env.VITE_API_BASE_URL);
+    // console.log(import.meta.env.VITE_API_BASE_URL);
 
     // const partnerid = import.meta.env.VITE_PARTNER_ID; // Replace with actual partner ID
     // const timestamp = Math.floor(Date.now() / 1000);
@@ -126,10 +126,10 @@ $api.interceptors.response.use(
     // }, 2000);
     return response;
   },
-   async(err) => {
+  async (err) => {
     const originalRequest = err.config;
 
-    console.log(err.response.data.responseMessage, "err broh");
+    console.log(err.config, "err broh");
     if (
       err?.response?.status === 401 &&
       err.response.data.responseMessage == "Invalid Token"
@@ -154,10 +154,7 @@ $api.interceptors.response.use(
           .catch((err) => Promise.reject(err));
       }
 
-      console.log('a');
-
-
-
+      console.log("a");
 
       originalRequest._retry = true;
       isRefreshing = true;
@@ -165,21 +162,21 @@ $api.interceptors.response.use(
       const refreshToken = authStore.refreshToken;
       console.log(refreshToken, "refresh token");
 
-      if (refreshToken == "1") {
+      if (refreshToken == "1" || !refreshToken) {
         // Handle no refresh token case, e.g., redirect to login
-        return Promise.reject(err);
+        console.log("no refresh token", Promise.reject);
+
+        return new Promise(function () {
+          layoutStore.setError(true);
+          layoutStore.setLoading(false);
+          console.log(err, "error broh pesan");
+          layoutStore.setErrorMessage('Session Expired!');
+        });
       }
 
-
-        try {
-
+      try {
         await authStore.getAccessTokenByRefreshToken();
-
         localStorage.setItem("accessToken", authStore.accessToken);
-
-        console.log(authStore.accessToken, "new access token");
-
-        // debugger;
         // Retry the failed requests with the new token
         processQueue(null, authStore.accessToken);
 
@@ -219,6 +216,9 @@ $api.interceptors.response.use(
     return new Promise(function () {
       layoutStore.setError(true);
       layoutStore.setLoading(false);
+
+      console.log(err.message, "error broh pesan");
+
       layoutStore.setErrorMessage(err?.message);
       //   /resolve, reject/
       //   // clearTimeout(delay_on_isloading);

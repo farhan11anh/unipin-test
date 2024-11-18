@@ -5,54 +5,86 @@ import AccountId from "@/components/details/input/AccountId.vue";
 import ZoneId from "@/components/details/input/ZoneId.vue";
 import { useDetailsGameStore } from "@/stores/details-game";
 import { $api } from "@/utils/api";
+import { computed } from "vue";
 
 const router = useRouter();
 const game_code = useRoute().params.game;
+const isTwoFields = computed(() => {
+  if (detailsGameStore?.details?.fields?.length === 2) {
+    return true;
+  }
+  return false;
+});
 
 const detailsGameStore = useDetailsGameStore();
 
 const isScardSelected = ref(false);
+const selectedCardDetails = ref({});
 const userid = ref("");
 const zoneid = ref("");
 
-
 detailsGameStore.getData(game_code);
 const gameDetails = computed(() => {
-  console.log(detailsGameStore.details);
-
   return detailsGameStore.details;
-})
+});
 
+const isActiveButton = computed(() => {
+  return (
+    isScardSelected.value &&
+    userid.value !== "" &&
+    (zoneid.value !== "" || !isTwoFields.value)
+  );
+});
 
-
-const isActiveButton = computed(()=> {
-  return isScardSelected.value && userid.value !== "" && zoneid.value !== "";
-})
-
-const onSelectCard = (event) => {
+const onSelectCard = (details) => {
   isScardSelected.value = true;
-  console.log(event);
+  selectedCardDetails.value = details;
+  console.log(details);
+};
 
-}
+const onsubmit = async () => {
+  let params = {
+    bayarindFee: selectedCardDetails.value.bayarindFee,
+    merchantFee: selectedCardDetails.value.merchantFee,
+    originalPrice: selectedCardDetails.value.originalPrice,
+    markupPrice: selectedCardDetails.value.markupPrice,
+    gameCode: selectedCardDetails.value.gameCode,
+    gameName: selectedCardDetails.value.gameName,
+    itemId: selectedCardDetails.value.itemId,
+    itemName: selectedCardDetails.value.itemName,
+    itemCurrency: selectedCardDetails.value.itemCurrency
+  };
 
-const onsubmit = async() => {
-  console.log('sambitt ');
-  try {
-    await $api.post('/in-game-topup/user/validate', {
-      game_code,
-      fields: {
-        userid: userid.value,
-        zoneid: zoneid.value
-      }
-    }).then((response) => {
-      console.log(response);
-    })
-  } catch (error) {
-
+  params = {
+    ...params, fields: gameDetails.value.fields
   }
 
-}
+  params.fields[0] = {
+    ...params.fields[0],
+    value: userid.value
+  }
 
+
+  // jika ada 2 field
+  if(isTwoFields.value) {
+    params.fields[1] = {
+      ...params.fields[1],
+      value: zoneid.value
+    }
+  }
+  try {
+    await $api
+      .post("/unipin/initiate-order", params)
+      .then((response) => {
+        console.log(response);
+        // redirect ke brimo
+      });
+  } catch (error) {
+    // redirect ke sini dan kosongkan data
+    layoutStore.setError(true);
+    layoutStore.setErrorMessage('error, failed to purchase item');
+  }
+};
 </script>
 
 <template>
@@ -80,37 +112,40 @@ const onsubmit = async() => {
     <div class="title-game">Input Account ID</div>
     <hr />
     <VRow>
-      <VCol
-        cols="8"
-      >
+      <VCol :cols="isTwoFields ? 8 : 12">
         <AccountId @valueAccountId="userid = $event" />
       </VCol>
-      <VCol
-        cols="4"
-      >
+      <VCol cols="4" v-if="isTwoFields">
         <ZoneId @valueZoneId="zoneid = $event" />
       </VCol>
     </VRow>
   </div>
 
   <!-- list item  -->
-   <div class="mt-5" >
-      <ListGame
-        @selectCard="onSelectCard($event)"
-        :items="gameDetails?.denominations"
-      />
-   </div>
 
-   <div style="width: 100%;" >
-      <div class="btn-done" :class="isActiveButton ? 'active' : 'disabled'">
-        <button @click="onsubmit()" class="btn" :class="{disabled : !isActiveButton}" :disabled="!isActiveButton">CONTINUE</button>
-      </div>
+  <!-- selectedcard bring items selected  -->
+  <div class="mt-5">
+    <ListGame
+      @selectCard="onSelectCard($event)"
+      :items="gameDetails?.denominations"
+    />
+  </div>
+
+  <div style="width: 100%">
+    <div class="btn-done" :class="isActiveButton ? 'active' : 'disabled'">
+      <button
+        @click="onsubmit()"
+        class="btn"
+        :class="{ disabled: !isActiveButton }"
+        :disabled="!isActiveButton"
+      >
+        CONTINUE
+      </button>
     </div>
-
+  </div>
 </template>
 
 <style scoped>
-
 .back {
   border: 1px solid #e4e4e4;
   border-radius: 12px;
