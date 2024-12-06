@@ -7,7 +7,7 @@ const layoutStore = useLayoutStore();
 const authStore = useAuthStore();
 
 export const $api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "/api/v1.0",
+  baseURL: "https://eternal-hot-doe.ngrok-free.app/api/v1.0",
 });
 
 $api.CancelToken = axios.CancelToken;
