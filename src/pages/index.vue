@@ -69,18 +69,36 @@ import { Icon } from "@iconify/vue";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useLayoutStore } from "@/stores/layout";
+import { useAuthStore } from "@/stores/auth";
 
 const layoutStore = useLayoutStore();
-
 const isLoading = computed(() => layoutStore.isLoading)
-
 const router = useRouter();
-
+const route = useRoute();
 const search = ref("");
+
+const authStore = useAuthStore();
+const token = authStore.accessToken;
+
+// get auth using ott on params
+// if access token not exist
+if(token === null) {
+  console.log(route.query.ott, "router ini");
+
+  authStore.getAcessToken(route.query.ott);
+  // if param no found or param not valid
+  if(false) {
+    // redirect to brimo again reject acccess web view
+  }
+  else{
+    // allow access webview
+  }
+
+}
+
 
 const gameListFiltered = computed(() => {
   const res = game_list.value.filter((game) => {
-
     return game.categoryName?.toLowerCase().includes(search.value.toLowerCase());
   });
   return res;

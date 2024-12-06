@@ -210,16 +210,20 @@ $api.interceptors.response.use(
     ) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
-      alert("Invalid OTT, please try again");
+      // alert("Invalid OTT, please try again");
+      console.log('Invalid OTT, please try again');
+
+      layoutStore.setError(true);
+      layoutStore.setErrorMessage("Invalid OTT, please try again");
     }
 
     return new Promise(function () {
       layoutStore.setError(true);
       layoutStore.setLoading(false);
 
-      console.log(err.message, "error broh pesan");
+      console.log(err?.response?.data?.responseMessage, "error broh pesan");
 
-      layoutStore.setErrorMessage(err?.message);
+      layoutStore.setErrorMessage(err?.response?.data?.responseMessage);
       //   /resolve, reject/
       //   // clearTimeout(delay_on_isloading);
       //   // delay_on_isloading = setTimeout(() => {

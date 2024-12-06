@@ -43,17 +43,22 @@ const onSelectCard = (details) => {
 };
 
 const onsubmit = async () => {
+  // layoutStore.isLoading = true
+  console.log(selectedCardDetails.value, 'params isi');
+  console.log(gameDetails.value, 'fields');
+
   let params = {
     bayarindFee: selectedCardDetails.value.bayarindFee,
     merchantFee: selectedCardDetails.value.merchantFee,
-    originalPrice: selectedCardDetails.value.originalPrice,
-    markupPrice: selectedCardDetails.value.markupPrice,
-    gameCode: selectedCardDetails.value.gameCode,
-    gameName: selectedCardDetails.value.gameName,
-    itemId: selectedCardDetails.value.itemId,
-    itemName: selectedCardDetails.value.itemName,
-    itemCurrency: selectedCardDetails.value.itemCurrency
+    originalPrice: selectedCardDetails.value.amount,
+    markupPrice: selectedCardDetails.value.totalAmount,
+    gameCode: gameDetails.value.game.code,
+    gameName: gameDetails.value.game.name,
+    itemId: (selectedCardDetails.value.id).toString(),
+    itemName: selectedCardDetails.value.name,
+    itemCurrency: selectedCardDetails.value.currency
   };
+  console.log(params, "ini paramsss ....");
 
   params = {
     ...params, fields: gameDetails.value.fields
@@ -76,13 +81,17 @@ const onsubmit = async () => {
     await $api
       .post("/unipin/initiate-order", params)
       .then((response) => {
-        console.log(response);
+        // layoutStore.isLoading = false
+        console.log(response.data.responseData.paymentUrl, "ini response url");
+        window.location.href = response.data.responseData.paymentUrl;
+
         // redirect ke brimo
       });
   } catch (error) {
     // redirect ke sini dan kosongkan data
     layoutStore.setError(true);
     layoutStore.setErrorMessage('error, failed to purchase item');
+    // layoutStore.isLoading = false
   }
 };
 </script>
@@ -100,13 +109,14 @@ const onsubmit = async () => {
     <VCol cols="2"></VCol>
   </VRow>
 
-  <div class="card-banner mt-5">
+  <!-- banner  -->
+  <!-- <div class="card-banner mt-5">
     <div style="height: 200px; margin-bottom: 15px">
       <VImg src="/src/assets/img/ml.jpg" width="100%" cover rounded />
     </div>
     <div class="title-game">{{ gameDetails?.game?.name }}</div>
     <div class="description">Top up {{ gameDetails?.game?.name }}</div>
-  </div>
+  </div> -->
 
   <div class="card-input mt-5">
     <div class="title-game">Input Account ID</div>

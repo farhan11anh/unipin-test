@@ -1,5 +1,6 @@
 <template>
   <div class="pa-5">
+    {{ layout.isError_data }}
     <v-app>
       <v-main>
         <router-view />

@@ -30,7 +30,7 @@ const onBlur = () => {
       v-model="zoneId"
       @focus="onFocus"
       @blur="onBlur"
-      @input="emit('valueZoneId', zoneId)"
+      @input="emit('valueZoneId', zoneId.toString())"
     />
     <span class="parenthesis">)</span>
   </div>

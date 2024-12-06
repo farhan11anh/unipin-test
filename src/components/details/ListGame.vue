@@ -16,6 +16,8 @@ const selectedCard = ref(null);
 // Method to handle card selection
 const selectCard = (value) => {
   selectedCard.value = value;
+  console.log(selectedCard.value, "selected card ..");
+
   // bring items selected details
   emit("selectCard", selectedCard.value);
 };
